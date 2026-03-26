@@ -1,0 +1,182 @@
+:root{
+  --app-primary:#0d6efd;
+  --app-primary-dark:#0b5ed7;
+  --app-bg:#f6f8fb;
+  --app-card:#ffffff;
+  --app-text:#0f172a;
+  --app-muted:#64748b;
+  --app-border:#e5e7eb;
+  --app-head:#f8fafc;
+  --app-row-hover:#f1f7ff;
+}
+
+body.app-body{
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.app-navbar{
+  background: linear-gradient(90deg, var(--app-primary-dark), var(--app-primary));
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.18);
+}
+
+.brand-school{font-weight:700;font-size:.9rem;letter-spacing:.2px;}
+.brand-system{font-weight:600;font-size:.8rem;opacity:.9;}
+
+.app-page-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:18px 0 14px;
+}
+.app-page-title h2{margin:0;font-weight:700;}
+
+.app-card{
+  background: var(--app-card);
+  border:1px solid var(--app-border);
+  border-radius:16px;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.06);
+}
+
+.table thead th{
+  white-space:nowrap;
+  background: var(--app-head);
+  color: var(--app-text);
+  font-size:.92rem;
+  font-weight:700;
+  border-bottom:1px solid var(--app-border);
+  vertical-align:middle;
+}
+
+.table tbody td{
+  vertical-align:middle;
+  border-color:#edf2f7;
+}
+
+.table tbody tr:hover{
+  background: var(--app-row-hover);
+}
+
+.table-responsive{
+  border-radius:14px;
+}
+
+/* Coluna de número da chamada */
+.col-chamada{
+  width:72px;
+  min-width:72px;
+  text-align:center;
+}
+
+.table th.col-chamada{
+  text-align:center;
+}
+
+.table td.col-chamada{
+  text-align:center;
+  font-weight:700;
+  color: var(--app-primary-dark);
+}
+
+/* Caso a tabela use a 1ª coluna para o número sem classe específica */
+.table.table-chamada th:first-child,
+.table.table-chamada td:first-child{
+  width:72px;
+  min-width:72px;
+  text-align:center;
+}
+
+.table.table-chamada td:first-child{
+  font-weight:700;
+  color: var(--app-primary-dark);
+}
+
+/* Nome do aluno com melhor leitura */
+.col-aluno{
+  font-weight:600;
+  color: var(--app-text);
+}
+
+/* Navbar mais enxuta e alinhada */
+.app-navbar .navbar-brand { padding-top: .2rem; padding-bottom: .2rem; }
+.app-navbar .nav-link { padding-top: .65rem; padding-bottom: .65rem; }
+.app-navbar .navbar-text { margin: 0; }
+
+/* BOTÃO PADRÃO DO MENU */
+.menu-btn {
+  height: 120px;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* HOVER PADRÃO */
+.menu-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+/* LANÇAR NOTAS (AZUL) */
+.btn-notas {
+  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+}
+
+/* SUBIR MAPÃO (VERDE) */
+.btn-mapao {
+  background: linear-gradient(135deg, #198754, #157347);
+}
+
+/* CONSELHO (LARANJA/AMARELO MAIS FORTE) */
+.btn-conselho {
+  background: linear-gradient(135deg, #fd7e14, #e8590c);
+}
+
+/* ============================================
+   DESTAQUE DE NOTAS ABAIXO DE 5
+   ============================================ */
+
+/* Nota baixa em inputs de texto/número */
+.nota-baixa {
+  background-color: #fff3cd !important;
+  border-color: #ffc107 !important;
+  font-weight: 600 !important;
+  color: #664d03 !important;
+}
+
+.nota-baixa:focus {
+  background-color: #fff3cd !important;
+  border-color: #ff9800 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+}
+
+/* Nota baixa em células de tabela */
+.nota-baixa-cell {
+  background-color: #fff3cd !important;
+  font-weight: 700 !important;
+  color: #664d03 !important;
+}
+
+/* Nota muito baixa (<3) - VERMELHO */
+.nota-muito-baixa {
+  background-color: #f8d7da !important;
+  border-color: #dc3545 !important;
+  font-weight: 700 !important;
+  color: #842029 !important;
+}
+
+.nota-muito-baixa:focus {
+  background-color: #f8d7da !important;
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.nota-muito-baixa-cell {
+  background-color: #f8d7da !important;
+  font-weight: 700 !important;
+  color: #842029 !important;
+}
