@@ -307,6 +307,7 @@ async function processarMapao(event) {
                 const valorFloat = parseFloat(notaFormatada);
                 if (!isNaN(valorFloat)) {
                   inputMedia.value = valorFloat;
+					console.log("Após importar:", inputMedia.value, inputMedia.className);
                   notasPreenchidas++;
 				  
 				  // ⭐ NOVO: Aplicar destaque imediatamente
