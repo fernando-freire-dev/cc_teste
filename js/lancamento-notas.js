@@ -339,20 +339,34 @@ async function processarMapao(event) {
       }
 
       if (notasPreenchidas > 0) {
-        alert(`Sucesso! ${notasPreenchidas} notas e faltas foram importadas do Mapão.`);
-        
-        // ⭐ NOVO: Mostrar resumo de notas baixas
-        setTimeout(() => {
-          const contagem = contarNotasBaixas();
-          if (contagem.total > 0) {
-            alert(`⚠️ Atenção: ${contagem.total} aluno(s) com nota abaixo de 5!\n\n` +
-                  `📊 Entre 3.0 e 4.9: ${contagem.baixas} aluno(s)\n` +
-                  `🚨 Abaixo de 3.0: ${contagem.muitoBaixas} aluno(s)`);
-          }
-        }, 300);
-      } else {
-        alert("Nenhuma nota foi preenchida. Verifique se os nomes dos alunos correspondem.");
-      }
+		  alert(`Sucesso! ${notasPreenchidas} notas e faltas foram importadas do Mapão.`);
+		
+		  // Reaplicar destaque em toda a tabela após a importação
+		  setTimeout(() => {
+		    destacarTodasNotas();
+		  }, 150);
+		
+		  setTimeout(() => {
+		    document.querySelectorAll("#corpoTabela .media").forEach(input => {
+		      aplicarDestaqueNota(input, input.value);
+		    });
+		  }, 200);
+		
+		  // Mostrar resumo de notas baixas
+		  setTimeout(() => {
+		    const contagem = contarNotasBaixas();
+		    if (contagem.total > 0) {
+		      alert(
+		        `⚠️ Atenção: ${contagem.total} aluno(s) com nota abaixo de 5!\n\n` +
+		        `📊 Entre 3.0 e 4.9: ${contagem.baixas} aluno(s)\n` +
+		        `🚨 Abaixo de 3.0: ${contagem.muitoBaixas} aluno(s)`
+		      );
+		    }
+		  }, 300);
+		
+		} else {
+		  alert("Nenhuma nota foi preenchida. Verifique se os nomes dos alunos correspondem.");
+		}
 
     } catch (err) {
       console.error(err);
