@@ -741,25 +741,25 @@ function salvarAlunoModalAtual() {
 
   linha.querySelector(".dificuldadeChk").checked = dificuldade;
   linha.querySelector(".dificuldadeTxt").value = dificuldade ? selecoesModal.dificuldade.join(", ") : "";
-
+  
   linha.querySelector(".selFazSala").value = fazSala;
   linha.querySelector(".salaMateriasTxt").value = fazSala === "false" ? selecoesModal.sala.join(", ") : "";
-
+  
   linha.querySelector(".selFazPlataforma").value = fazPlataforma;
   linha.querySelector(".plataformaMateriasTxt").value = fazPlataforma === "false" ? selecoesModal.plataforma.join(", ") : "";
-
+  
   linha.querySelector(".indisciplinaChk").checked = indisciplina;
   linha.querySelector(".indisciplinaTxt").value = indisciplina ? textoIndisciplina : "";
-
-  linha.querySelector(".proficiencia").value = proficiencia;
-
-  // marca concluído automaticamente ao salvar com sucesso
+  
+  linha.querySelector(".proficiencia").value =
+    document.getElementById("modalProficiencia").value;
+  
+  // concluído automático
   linha.querySelector(".concluidoSwitch").checked = true;
-  document.getElementById("modalConcluido").checked = true;
-
+  
   atualizarStatusLinha(linha);
   atualizarContadoresTabela();
-
+  
   return true;
 }
 
