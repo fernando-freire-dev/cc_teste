@@ -639,13 +639,14 @@ function configurarEventosModalConselho() {
   });
 }
 
-window.abrirModalConselho = function(index) {
+window.abrirModalConselho = async function(index) {
   const linhas = document.querySelectorAll("#corpoTabela tr");
   alunoAtualIndex = index;
 
   const linha = linhas[index];
   if (!linha) return;
 
+  const alunoId = linha.getAttribute("data-aluno-id");
   const nome = linha.querySelector(".col-aluno")?.innerText || "";
   document.getElementById("modalAlunoTitulo").innerText = nome;
 
@@ -682,7 +683,8 @@ window.abrirModalConselho = function(index) {
   document.getElementById("modalProficiencia").value =
     linha.querySelector(".proficiencia")?.value || "";
 
-    linha.querySelector(".concluidoSwitch").checked = true;
+  // Não marcar como concluído ao abrir o modal
+  // linha.querySelector(".concluidoSwitch").checked = true;
 
   alternarAreaPorRadio("modalDificuldade", "modalDificuldadeArea", "true");
   alternarAreaPorRadio("modalFazSala", "modalSalaArea", "false");
@@ -696,10 +698,30 @@ window.abrirModalConselho = function(index) {
   document.getElementById("btnAnterior").disabled = index === 0;
   document.getElementById("btnProximo").disabled = index === linhas.length - 1;
 
+  const textoProfAnterior = document.getElementById("textoProficienciaAnterior");
+  if (textoProfAnterior) {
+    textoProfAnterior.textContent = "Proficiência no conselho anterior: carregando...";
+  }
+
+  try {
+    const profAnterior = await buscarProficienciaBimestreAnterior(alunoId, conselhoAtual);
+
+    if (textoProfAnterior) {
+      textoProfAnterior.textContent = profAnterior
+        ? `Proficiência no conselho anterior: ${profAnterior}`
+        : "Proficiência no conselho anterior: não registrada";
+    }
+  } catch (err) {
+    console.error("Erro ao carregar proficiência anterior:", err);
+    if (textoProfAnterior) {
+      textoProfAnterior.textContent = "Proficiência no conselho anterior: não foi possível carregar";
+    }
+  }
+
   bootstrap.Modal.getOrCreateInstance(
     document.getElementById("modalConselhoAluno")
   ).show();
-}
+};
 
 async function salvarAlunoModalAtual() {
   const linhas = document.querySelectorAll("#corpoTabela tr");
