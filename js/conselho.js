@@ -365,17 +365,13 @@ async function montarTabelaAlunos(turmaId, bimestre) {
   headerTop.innerHTML = `
     <th class="col-chamada">Nº</th>
     <th>Nome</th>
-    <th>Dificuldades</th>
-    <th>Atividade em sala</th>
-    <th>Plataformas</th>
-    <th>Indisciplina</th>
+    <th>Resumo</th>
     <th>Proficiência</th>
-    <th class="text-center">Notas</th>
-    <th class="text-center">Concluído</th>
-  `; // [V1.1] Removido Faltoso/Dorme e ajustado cabeçalho
+    <th class="text-center">Ações</th>
+    <th class="text-center">Status</th>
+  `;
 
-
-  // Disciplinas da turma (modal boletim)
+  // Disciplinas da turma (cache para modal do conselho e modal de notas)
   const { data: disciplinas, error: errDisciplinas } = await supabaseClient
     .from("turma_disciplinas")
     .select("disciplinas(id, nome)")
@@ -394,7 +390,6 @@ async function montarTabelaAlunos(turmaId, bimestre) {
   ).values()];
 
   window.cacheDisciplinas = disciplinasUnicas;
-  console.log("Disciplinas carregadas:", window.cacheDisciplinas);
 
   // Alunos - ordenação pela chamada
   const { data: alunos, error: errAlunos } = await supabaseClient
@@ -433,12 +428,12 @@ async function montarTabelaAlunos(turmaId, bimestre) {
   }
 
   window.cacheNotasPorAluno = {};
-	(notas || []).forEach(n => {
-	  if (!window.cacheNotasPorAluno[n.aluno_id]) {
-	    window.cacheNotasPorAluno[n.aluno_id] = [];
-	  }
-	  window.cacheNotasPorAluno[n.aluno_id].push(n);
-	});
+  (notas || []).forEach(n => {
+    if (!window.cacheNotasPorAluno[n.aluno_id]) {
+      window.cacheNotasPorAluno[n.aluno_id] = [];
+    }
+    window.cacheNotasPorAluno[n.aluno_id].push(n);
+  });
 
   // Dados do conselho já salvos
   const { data: dadosConselho, error: errConselho } = await supabaseClient
@@ -455,119 +450,144 @@ async function montarTabelaAlunos(turmaId, bimestre) {
   (alunos || []).forEach((aluno, index) => {
     const dadosAluno = (dadosConselho || []).find(d => d.aluno_id === aluno.id) || {};
 
-    const difAreaId = `dif_${aluno.id}`;
-    const salaAreaId = `sala_${aluno.id}`;
-    const platAreaId = `plat_${aluno.id}`;
+    const difTem = !!(
+      dadosAluno?.dificuldade &&
+      typeof dadosAluno.dificuldade === "object" &&
+      dadosAluno.dificuldade.tem
+    );
+    const difMat = (
+      dadosAluno?.dificuldade &&
+      typeof dadosAluno.dificuldade === "object"
+    ) ? (dadosAluno.dificuldade.materias ?? "") : "";
 
-    const indAreaId = `ind_${aluno.id}`; // [V1.1] área da indisciplina
-
-    const difTem = !!(dadosAluno?.dificuldade && typeof dadosAluno.dificuldade === "object" && dadosAluno.dificuldade.tem);
-    const difMat = (dadosAluno?.dificuldade && typeof dadosAluno.dificuldade === "object") ? (dadosAluno.dificuldade.materias ?? "") : "";
-
-    // NOVO: faz_atividade_sala / faz_plataforma
     const fazSala = lerFaz(dadosAluno?.faz_atividade_sala);
-    const salaMat = (dadosAluno?.faz_atividade_sala && typeof dadosAluno.faz_atividade_sala === "object") ? (dadosAluno.faz_atividade_sala.materias ?? "") : "";
+    const salaMat = (
+      dadosAluno?.faz_atividade_sala &&
+      typeof dadosAluno.faz_atividade_sala === "object"
+    ) ? (dadosAluno.faz_atividade_sala.materias ?? "") : "";
 
     const fazPlat = lerFaz(dadosAluno?.faz_plataforma);
-    const platMat = (dadosAluno?.faz_plataforma && typeof dadosAluno.faz_plataforma === "object") ? (dadosAluno.faz_plataforma.materias ?? "") : "";
+    const platMat = (
+      dadosAluno?.faz_plataforma &&
+      typeof dadosAluno.faz_plataforma === "object"
+    ) ? (dadosAluno.faz_plataforma.materias ?? "") : "";
 
-    // [V1.1] Indisciplina agora é objeto (jsonb) no padrão: { tem: boolean, descricao: string }
-    // Compatível com dados antigos (boolean) caso ainda existam.
     const indRaw = dadosAluno?.indisciplina;
     const indTem = (indRaw && typeof indRaw === "object") ? !!indRaw.tem : !!indRaw;
     const indDesc = (indRaw && typeof indRaw === "object") ? (indRaw.descricao ?? "") : "";
 
+    const proficiencia = dadosAluno?.nivel_proficiencia ?? "";
+    const concluido = !!dadosAluno?.concluido;
+
+    // Campos ocultos para manter compatibilidade com o modal e com salvarConselho()
+    const hiddenFields = `
+      <input type="checkbox" class="d-none dificuldadeChk" ${difTem ? "checked" : ""}>
+      <textarea class="d-none dificuldadeTxt">${difMat}</textarea>
+
+      <select class="d-none selFazSala">
+        <option value="true" ${fazSala ? "selected" : ""}>Faz</option>
+        <option value="false" ${!fazSala ? "selected" : ""}>Não faz</option>
+      </select>
+      <textarea class="d-none salaMateriasTxt">${salaMat}</textarea>
+
+      <select class="d-none selFazPlataforma">
+        <option value="true" ${fazPlat ? "selected" : ""}>Faz</option>
+        <option value="false" ${!fazPlat ? "selected" : ""}>Não faz</option>
+      </select>
+      <textarea class="d-none plataformaMateriasTxt">${platMat}</textarea>
+
+      <input type="checkbox" class="d-none indisciplinaChk" ${indTem ? "checked" : ""}>
+      <textarea class="d-none indisciplinaTxt">${indDesc}</textarea>
+
+      <select class="d-none proficiencia">
+        <option value="">Selecione</option>
+        <option value="Abaixo do Básico" ${proficiencia === "Abaixo do Básico" ? "selected" : ""}>Abaixo do Básico</option>
+        <option value="Básico" ${proficiencia === "Básico" ? "selected" : ""}>Básico</option>
+        <option value="Proficiente" ${proficiencia === "Proficiente" ? "selected" : ""}>Proficiente</option>
+      </select>
+
+      <input type="checkbox" class="d-none concluidoSwitch" ${concluido ? "checked" : ""}>
+    `;
+
+    const badges = [];
+
+    if (difTem) {
+      const qtdDif = difMat
+        ? String(difMat).split(",").map(t => t.trim()).filter(Boolean).length
+        : 0;
+      badges.push(
+        `<span class="badge text-bg-warning text-dark me-1 mb-1">Dificuldade${qtdDif > 0 ? ` (${qtdDif})` : ""}</span>`
+      );
+    }
+
+    if (!fazSala) {
+      const qtdSala = salaMat
+        ? String(salaMat).split(",").map(t => t.trim()).filter(Boolean).length
+        : 0;
+      badges.push(
+        `<span class="badge text-bg-secondary me-1 mb-1">Sem atividade${qtdSala > 0 ? ` (${qtdSala})` : ""}</span>`
+      );
+    }
+
+    if (!fazPlat) {
+      const qtdPlat = platMat
+        ? String(platMat).split(",").map(t => t.trim()).filter(Boolean).length
+        : 0;
+      badges.push(
+        `<span class="badge text-bg-info me-1 mb-1">Sem plataforma${qtdPlat > 0 ? ` (${qtdPlat})` : ""}</span>`
+      );
+    }
+
+    if (indTem) {
+      badges.push(
+        `<span class="badge text-bg-danger me-1 mb-1">Indisciplina</span>`
+      );
+    }
+
+    const resumoHtml = badges.length > 0
+      ? badges.join("")
+      : `<span class="text-muted small">Sem apontamentos</span>`;
+
+    const proficienciaHtml = proficiencia
+      ? `<span>${proficiencia}</span>`
+      : `<span class="text-muted">-</span>`;
+
+    const statusHtml = `
+      <span class="badge status-badge ${concluido ? "text-bg-success" : "text-bg-secondary"}">
+        ${concluido ? "Concluído" : "Pendente"}
+      </span>
+    `;
+
     const linhaHtml = `
-      <tr data-aluno-id="${aluno.id}" class="${dadosAluno?.concluido ? "row-concluido" : ""}">
+      <tr data-aluno-id="${aluno.id}" class="${concluido ? "row-concluido" : ""}">
         <td class="col-chamada">${aluno.numero_chamada ?? ""}</td>
-        <td class="fw-semibold col-aluno">${aluno.nome}</td>
 
-        <!-- Dificuldades -->
+        <td class="fw-semibold col-aluno">
+          ${aluno.nome}
+          ${hiddenFields}
+        </td>
+
         <td style="min-width: 260px;">
-          <div class="form-check">
-            <input class="form-check-input toggle-area dificuldadeChk" type="checkbox"
-              data-target="${difAreaId}" ${difTem ? "checked" : ""}>
-            <label class="form-check-label">Tem dificuldade</label>
-          </div>
-          <div id="${difAreaId}" class="mt-2 ${difTem ? "" : "d-none"}">
-            <textarea class="form-control form-control-sm dificuldadeTxt" rows="2"
-              placeholder="Quais matérias?">${difMat}</textarea>
+          ${resumoHtml}
+        </td>
+
+        <td style="min-width: 170px;">
+          ${proficienciaHtml}
+        </td>
+
+        <td class="text-center" style="min-width: 150px;">
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <button type="button" class="btn btn-sm btn-success" onclick="abrirModalConselho(${index})">
+              Conselho
+            </button>
+            <button type="button" class="btn btn-sm btn-primary btn-notas" data-aluno="${aluno.id}">
+              Notas
+            </button>
           </div>
         </td>
 
-        <!-- [V1.1] Removido: Faltoso -->
-
-        <!-- Faz atividade em sala? -->
-        <td style="min-width: 280px;">
-          <div class="small fw-semibold mb-1">Faz atividade em sala de aula?</div>
-          <select class="form-select form-select-sm selFazSala" data-target="${salaAreaId}">
-            <option value="true" ${fazSala ? "selected" : ""}>Faz</option>
-            <option value="false" ${!fazSala ? "selected" : ""}>Não faz</option>
-          </select>
-          <div id="${salaAreaId}" class="mt-2 ${!fazSala ? "" : "d-none"}">
-            <textarea class="form-control form-control-sm salaMateriasTxt" rows="2"
-              placeholder="Quais disciplinas?">${salaMat}</textarea>
-          </div>
-        </td>
-
-        <!-- [V1.1] Removido: Dorme -->
-
-        <!-- Faz plataformas? -->
-        <td style="min-width: 300px;">
-          <div class="small fw-semibold mb-1">Faz Plataformas?</div>
-          <select class="form-select form-select-sm selFazPlataforma" data-target="${platAreaId}">
-            <option value="true" ${fazPlat ? "selected" : ""}>Faz</option>
-            <option value="false" ${!fazPlat ? "selected" : ""}>Não faz</option>
-          </select>
-          <div id="${platAreaId}" class="mt-2 ${!fazPlat ? "" : "d-none"}">
-            <textarea class="form-control form-control-sm plataformaMateriasTxt" rows="2"
-              placeholder="Quais disciplinas?">${platMat}</textarea>
-          </div>
-        </td>
-
-        <!-- [V1.1] Indisciplina com descrição (abre textarea ao marcar) -->
-        <td style="min-width: 260px;">
-          <div class="form-check">
-            <input class="form-check-input toggle-area indisciplinaChk" type="checkbox"
-              data-target="${indAreaId}" ${indTem ? "checked" : ""}>
-            <label class="form-check-label">Indisciplina</label>
-          </div>
-          <div id="${indAreaId}" class="mt-2 ${indTem ? "" : "d-none"}">
-            <textarea class="form-control form-control-sm indisciplinaTxt" rows="2"
-              placeholder="Descreva a indisciplina (ex.: uso de celular, conversas, desrespeito...)">${indDesc}</textarea>
-          </div>
-        </td>
-
-        <!-- Proficiência -->
-        <td style="min-width: 190px;">
-          <select class="form-select form-select-sm proficiencia">
-            <option value="">Selecione</option>
-            <option value="Abaixo do Básico">Abaixo do Básico</option>
-            <option value="Básico">Básico</option>
-            <option value="Proficiente">Proficiente</option>
-          </select>
-        </td>
-
-        <!-- Notas -->
-        <td class="text-center">
-		  <button class="btn btn-sm btn-success" onclick="abrirModalConselho(${index})">
-		    Conselho
-		  </button>
-          <button type="button" class="btn btn-sm btn-primary btn-notas" data-aluno="${aluno.id}">
-            Notas
-          </button>
-        </td>
-
-        <!-- Concluído -->
-        <td class="text-center">
-          <div class="d-inline-flex align-items-center gap-2">
-            <div class="form-check form-switch m-0">
-              <input class="form-check-input concluidoSwitch" type="checkbox" ${dadosAluno?.concluido ? "checked" : ""}>
-            </div>
-            <span class="badge status-badge ${dadosAluno?.concluido ? "text-bg-success" : "text-bg-secondary"}">
-              ${dadosAluno?.concluido ? "Concluído" : "Pendente"}
-            </span>
-          </div>
+        <td class="text-center" style="min-width: 120px;">
+          ${statusHtml}
         </td>
       </tr>
     `;
@@ -575,9 +595,6 @@ async function montarTabelaAlunos(turmaId, bimestre) {
     corpo.insertAdjacentHTML("beforeend", linhaHtml);
 
     const row = corpo.querySelector(`tr[data-aluno-id="${aluno.id}"]`);
-    const sel = row?.querySelector(".proficiencia");
-    if (sel) sel.value = dadosAluno?.nivel_proficiencia ?? "";
-
     atualizarStatusLinha(row);
   });
 
