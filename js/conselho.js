@@ -751,6 +751,24 @@ async function salvarConselho() {
     const proficiencia = linha.querySelector(".proficiencia")?.value || null;
     const concluido = linha.querySelector(".concluidoSwitch")?.checked || false;
 
+	//Validação extra
+	if (dificuldade && !dificuldadeMaterias) {
+	  throw new Error(`Selecione ao menos uma disciplina de dificuldade para o aluno.`);
+	}
+	
+	if (!fazSala && !salaMaterias) {
+	  throw new Error(`Selecione ao menos uma disciplina em atividade em sala.`);
+	}
+	
+	if (!fazPlat && !platMaterias) {
+	  throw new Error(`Selecione ao menos uma disciplina em plataformas.`);
+	}
+	
+	if (indTem && !indDesc) {
+	  throw new Error(`Descreva a indisciplina do aluno.`);
+	}
+	//Fim da Validação extra
+
     dadosParaSalvar.push({
       conselho_id: conselhoAtual.id,
       aluno_id: alunoId,
