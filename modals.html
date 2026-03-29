@@ -202,66 +202,78 @@
 
         <!-- DIFICULDADE -->
         <div class="mb-4">
-          <label class="fw-semibold d-block mb-2">Tem dificuldade?</label>
-
-          <div class="d-flex gap-4 mb-2">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalDificuldade" id="modalDificuldadeNao" value="false" checked>
-              <label class="form-check-label" for="modalDificuldadeNao">Não</label>
+            <label class="fw-semibold d-block mb-2">Tem dificuldade?</label>
+          
+            <div class="d-flex gap-4 mb-2">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalDificuldade" id="modalDificuldadeNao" value="false" checked>
+                <label class="form-check-label" for="modalDificuldadeNao">Não</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalDificuldade" id="modalDificuldadeSim" value="true">
+                <label class="form-check-label" for="modalDificuldadeSim">Sim</label>
+              </div>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalDificuldade" id="modalDificuldadeSim" value="true">
-              <label class="form-check-label" for="modalDificuldadeSim">Sim</label>
+          
+            <div id="modalDificuldadeArea" class="d-none">
+              <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="btnSelecionarDificuldade">
+                  Selecionar disciplinas
+                </button>
+                <span class="text-muted small" id="resumoDificuldade">Nenhuma disciplina selecionada</span>
+              </div>
             </div>
           </div>
-
-          <div id="modalDificuldadeArea" class="d-none border rounded p-3 bg-light">
-            <div class="fw-semibold mb-2">Marque as disciplinas:</div>
-            <div id="modalDificuldadeDisciplinas" class="row g-2"></div>
-          </div>
-        </div>
 
         <!-- ATIVIDADE EM SALA -->
         <div class="mb-4">
-          <label class="fw-semibold d-block mb-2">Faz atividade em sala?</label>
-
-          <div class="d-flex gap-4 mb-2">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalFazSala" id="modalFazSalaSim" value="true" checked>
-              <label class="form-check-label" for="modalFazSalaSim">Sim</label>
+            <label class="fw-semibold d-block mb-2">Faz atividade em sala?</label>
+          
+            <div class="d-flex gap-4 mb-2">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalFazSala" id="modalFazSalaSim" value="true" checked>
+                <label class="form-check-label" for="modalFazSalaSim">Sim</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalFazSala" id="modalFazSalaNao" value="false">
+                <label class="form-check-label" for="modalFazSalaNao">Não</label>
+              </div>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalFazSala" id="modalFazSalaNao" value="false">
-              <label class="form-check-label" for="modalFazSalaNao">Não</label>
+          
+            <div id="modalSalaArea" class="d-none">
+              <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="btnSelecionarSala">
+                  Selecionar disciplinas
+                </button>
+                <span class="text-muted small" id="resumoSala">Nenhuma disciplina selecionada</span>
+              </div>
             </div>
           </div>
-
-          <div id="modalSalaArea" class="d-none border rounded p-3 bg-light">
-            <div class="fw-semibold mb-2">Em quais disciplinas não faz?</div>
-            <div id="modalSalaDisciplinas" class="row g-2"></div>
-          </div>
-        </div>
 
         <!-- PLATAFORMAS -->
         <div class="mb-4">
-          <label class="fw-semibold d-block mb-2">Faz plataformas?</label>
-
-          <div class="d-flex gap-4 mb-2">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalFazPlataforma" id="modalFazPlataformaSim" value="true" checked>
-              <label class="form-check-label" for="modalFazPlataformaSim">Sim</label>
+            <label class="fw-semibold d-block mb-2">Faz plataformas?</label>
+          
+            <div class="d-flex gap-4 mb-2">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalFazPlataforma" id="modalFazPlataformaSim" value="true" checked>
+                <label class="form-check-label" for="modalFazPlataformaSim">Sim</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="modalFazPlataforma" id="modalFazPlataformaNao" value="false">
+                <label class="form-check-label" for="modalFazPlataformaNao">Não</label>
+              </div>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="modalFazPlataforma" id="modalFazPlataformaNao" value="false">
-              <label class="form-check-label" for="modalFazPlataformaNao">Não</label>
+          
+            <div id="modalPlataformaArea" class="d-none">
+              <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="btnSelecionarPlataforma">
+                  Selecionar disciplinas
+                </button>
+                <span class="text-muted small" id="resumoPlataforma">Nenhuma disciplina selecionada</span>
+              </div>
             </div>
           </div>
-
-          <div id="modalPlataformaArea" class="d-none border rounded p-3 bg-light">
-            <div class="fw-semibold mb-2">Em quais disciplinas não faz?</div>
-            <div id="modalPlataformaDisciplinas" class="row g-2"></div>
-          </div>
-        </div>
 
         <!-- INDISCIPLINA -->
         <div class="mb-4">
@@ -310,6 +322,31 @@
         </div>
 
         <button class="btn btn-success" id="btnSalvarAluno" type="button">Salvar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal secundário para as disciplinas caso o professor precise indicar as disciplinas de dificuldade no conselho -->
+<div class="modal fade" id="modalSelecionarDisciplinas" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 id="modalSelecionarDisciplinasTitulo" class="modal-title">Selecionar disciplinas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div id="modalSelecionarDisciplinasLista" class="border rounded p-3" style="max-height: 320px; overflow-y: auto;">
+          <!-- lista dinâmica -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-success" id="btnConfirmarDisciplinas">Confirmar</button>
       </div>
 
     </div>
