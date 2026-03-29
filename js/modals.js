@@ -623,7 +623,7 @@ function abrirModalConselho(index) {
 function salvarAlunoModalAtual() {
   const linhas = document.querySelectorAll("#corpoTabela tr");
   const linha = linhas[alunoAtualIndex];
-  if (!linha) return;
+  if (!linha) return false;
 
   const dificuldade = document.querySelector('input[name="modalDificuldade"]:checked')?.value === "true";
   const fazSala = document.querySelector('input[name="modalFazSala"]:checked')?.value || "true";
@@ -633,6 +633,27 @@ function salvarAlunoModalAtual() {
   const dificuldadeSelecionadas = obterSelecionadasPorClasse("modalDificuldadeDisciplinas-chk");
   const salaSelecionadas = obterSelecionadasPorClasse("modalSalaDisciplinas-chk");
   const plataformaSelecionadas = obterSelecionadasPorClasse("modalPlataformaDisciplinas-chk");
+  const textoIndisciplina = document.getElementById("modalIndisciplinaTxt").value.trim();
+
+  if (dificuldade && dificuldadeSelecionadas.length === 0) {
+    alert("Se marcar 'Tem dificuldade = Sim', selecione pelo menos uma disciplina.");
+    return false;
+  }
+
+  if (fazSala === "false" && salaSelecionadas.length === 0) {
+    alert("Se marcar 'Faz atividade em sala = Não', selecione pelo menos uma disciplina.");
+    return false;
+  }
+
+  if (fazPlataforma === "false" && plataformaSelecionadas.length === 0) {
+    alert("Se marcar 'Faz plataformas = Não', selecione pelo menos uma disciplina.");
+    return false;
+  }
+
+  if (indisciplina && !textoIndisciplina) {
+    alert("Se marcar 'Indisciplina = Sim', descreva a indisciplina.");
+    return false;
+  }
 
   linha.querySelector(".dificuldadeChk").checked = dificuldade;
   linha.querySelector(".dificuldadeTxt").value = dificuldade ? dificuldadeSelecionadas.join(", ") : "";
@@ -644,8 +665,7 @@ function salvarAlunoModalAtual() {
   linha.querySelector(".plataformaMateriasTxt").value = fazPlataforma === "false" ? plataformaSelecionadas.join(", ") : "";
 
   linha.querySelector(".indisciplinaChk").checked = indisciplina;
-  linha.querySelector(".indisciplinaTxt").value =
-    indisciplina ? document.getElementById("modalIndisciplinaTxt").value.trim() : "";
+  linha.querySelector(".indisciplinaTxt").value = indisciplina ? textoIndisciplina : "";
 
   linha.querySelector(".proficiencia").value =
     document.getElementById("modalProficiencia").value;
@@ -655,6 +675,8 @@ function salvarAlunoModalAtual() {
 
   atualizarStatusLinha(linha);
   atualizarContadoresTabela();
+
+  return true;
 }
 
 document.addEventListener("modalsLoaded", () => {
