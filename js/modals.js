@@ -701,7 +701,7 @@ window.abrirModalConselho = function(index) {
   ).show();
 }
 
-function salvarAlunoModalAtual() {
+async function salvarAlunoModalAtual() {
   const linhas = document.querySelectorAll("#corpoTabela tr");
   const linha = linhas[alunoAtualIndex];
   if (!linha) return false;
@@ -737,6 +737,30 @@ function salvarAlunoModalAtual() {
   if (!proficiencia) {
     alert("Selecione o nível de proficiência do aluno.");
     return false;
+  }
+  const alunoId = linha.getAttribute("data-aluno-id");
+
+  if (proficiencia && conselhoAtual?.bimestre > 1) {
+    try {
+      const validacao = await validarProficienciaBimestreAnterior(
+        alunoId,
+        conselhoAtual,
+        proficiencia
+      );
+  
+      if (!validacao.permitido) {
+        alert(
+          `O aluno não pode regredir na proficiência.\n\n` +
+          `Bimestre anterior: ${validacao.nivelAnterior}\n` +
+          `Selecionado agora: ${proficiencia}`
+        );
+        return false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao validar a proficiência do bimestre anterior.");
+      return false;
+    }
   }
 
   function atualizarResumoVisualLinha(linha) {
