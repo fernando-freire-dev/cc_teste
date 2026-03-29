@@ -351,25 +351,15 @@ async function carregarConselho() {
 
 // Monta tabela
 async function montarTabelaAlunos(turmaId, bimestre) {
-  const headerTop = document.getElementById("headerTop");
   const corpo = document.getElementById("corpoTabela");
 
-  if (!headerTop || !corpo) {
-    console.error("IDs do HTML não encontrados. Verifique se existem: headerTop, corpoTabela");
-    alert("Erro na tela: cabeçalho/tabela não encontrados. Verifique o HTML do conselho.");
-    return;
-  }
-
-  corpo.innerHTML = "";
-
-  headerTop.innerHTML = `
-    <th class="col-chamada">Nº</th>
-    <th>Nome</th>
-    <th>Resumo</th>
-    <th>Proficiência</th>
-    <th class="text-center">Ações</th>
-    <th class="text-center">Status</th>
-  `;
+	if (!corpo) {
+	  console.error("Tabela não encontrada (corpoTabela).");
+	  alert("Erro na tela: tabela não encontrada.");
+	  return;
+	}
+	
+	corpo.innerHTML = "";
 
   // Disciplinas da turma (cache para modal do conselho e modal de notas)
   const { data: disciplinas, error: errDisciplinas } = await supabaseClient
