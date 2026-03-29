@@ -717,6 +717,34 @@ async function salvarObservacoesGerais() {
   alert("Observações salvas!");
 }
 
+//Função para buscar o proficiência do bimestre anterior
+async function buscarProficienciaBimestreAnterior(alunoId, conselhoAtual) {
+  const bimestreAtual = Number(conselhoAtual?.bimestre || 0);
+  const bimestreAnterior = bimestreAtual - 1;
+
+  if (bimestreAnterior < 1) {
+    return null;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("conselho_alunos")
+    .select(`
+      nivel_proficiencia,
+      conselhos!inner(turma_id, bimestre)
+    `)
+    .eq("aluno_id", alunoId)
+    .eq("conselhos.turma_id", conselhoAtual.turma_id)
+    .eq("conselhos.bimestre", bimestreAnterior)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Erro ao buscar proficiência anterior:", error);
+    return null;
+  }
+
+  return data?.nivel_proficiencia || null;
+}
+
 //Função para validar o nível de proficiencia para não regredir
 const ordemProficiencia = {
   "Abaixo do Básico": 1,
