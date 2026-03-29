@@ -20,8 +20,8 @@ function lerFaz(jsonb) {
 }
 
 // Cache para o modal de notas
-let cacheDisciplinas = [];
-let cacheNotasPorAluno = {};
+window.cacheDisciplinas = [];
+window.cacheNotasPorAluno = {};
 let modalNotasInstance = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -393,7 +393,7 @@ async function montarTabelaAlunos(turmaId, bimestre) {
       .map(d => [d.disciplinas.id, d.disciplinas])
   ).values()];
 
-  cacheDisciplinas = disciplinasUnicas;
+  window.cacheDisciplinas = disciplinasUnicas;
 
   // Alunos - ordenação pela chamada
   const { data: alunos, error: errAlunos } = await supabaseClient
@@ -431,10 +431,10 @@ async function montarTabelaAlunos(turmaId, bimestre) {
     notas = notasData || [];
   }
 
-  cacheNotasPorAluno = {};
+  window.cacheNotasPorAluno = {};
   (notas || []).forEach(n => {
-    if (!cacheNotasPorAluno[n.aluno_id]) cacheNotasPorAluno[n.aluno_id] = [];
-    cacheNotasPorAluno[n.aluno_id].push(n);
+    if (!cacheNotasPorAluno[n.aluno_id]) window.cacheNotasPorAluno[n.aluno_id] = [];
+    window.cacheNotasPorAluno[n.aluno_id].push(n);
   });
 
   // Dados do conselho já salvos
