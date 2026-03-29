@@ -904,25 +904,24 @@ document.addEventListener("modalsLoaded", () => {
     bootstrap.Modal.getInstance(document.getElementById("modalSelecionarDisciplinas"))?.hide();
   });
 
-  document.getElementById("btnSalvarAluno")?.addEventListener("click", () => {
-    const salvou = salvarAlunoModalAtual();
-    if (!salvou) return;
+  document.getElementById("btnSalvarAluno")?.addEventListener("click", async () => {
+  const salvou = await salvarAlunoModalAtual();
+  if (!salvou) return;
 
-    bootstrap.Modal.getInstance(document.getElementById("modalConselhoAluno"))?.hide();
-  });
+  bootstrap.Modal.getInstance(document.getElementById("modalConselhoAluno"))?.hide();
+});
 
-  document.getElementById("btnAnterior")?.addEventListener("click", () => {
-    const salvou = salvarAlunoModalAtual();
-    if (!salvou) return;
+document.getElementById("btnAnterior")?.addEventListener("click", async () => {
+  const salvou = await salvarAlunoModalAtual();
+  if (!salvou) return;
 
-    if (alunoAtualIndex > 0) abrirModalConselho(alunoAtualIndex - 1);
-  });
+  if (alunoAtualIndex > 0) abrirModalConselho(alunoAtualIndex - 1);
+});
 
-  document.getElementById("btnProximo")?.addEventListener("click", () => {
-    const salvou = salvarAlunoModalAtual();
-    if (!salvou) return;
+document.getElementById("btnProximo")?.addEventListener("click", async () => {
+  const salvou = await salvarAlunoModalAtual();
+  if (!salvou) return;
 
-    const linhas = document.querySelectorAll("#corpoTabela tr");
-    if (alunoAtualIndex < linhas.length - 1) abrirModalConselho(alunoAtualIndex + 1);
-  });
+  const linhas = document.querySelectorAll("#corpoTabela tr");
+  if (alunoAtualIndex < linhas.length - 1) abrirModalConselho(alunoAtualIndex + 1);
 });
