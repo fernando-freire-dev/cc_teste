@@ -547,6 +547,9 @@ async function montarTabelaAlunos(turmaId, bimestre) {
 
         <!-- Notas -->
         <td class="text-center">
+		  <button class="btn btn-sm btn-success" onclick="abrirModalConselho(${index})">
+		    Conselho
+		  </button>
           <button type="button" class="btn btn-sm btn-primary btn-notas" data-aluno="${aluno.id}">
             Notas
           </button>
