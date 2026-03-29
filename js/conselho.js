@@ -717,6 +717,54 @@ async function salvarObservacoesGerais() {
   alert("Observações salvas!");
 }
 
+//Função para validar o nível de proficiencia para não regredir
+const ordemProficiencia = {
+  "Abaixo do Básico": 1,
+  "Básico": 2,
+  "Proficiente": 3
+};
+
+async function validarProficienciaBimestreAnterior(alunoId, conselhoAtual, novaProficiencia) {
+  const bimestreAtual = Number(conselhoAtual.bimestre);
+  const bimestreAnterior = bimestreAtual - 1;
+
+  if (bimestreAnterior < 1) {
+    return { permitido: true };
+  }
+
+  const { data: registroAnterior, error } = await supabaseClient
+    .from("conselho_alunos")
+    .select(`
+      nivel_proficiencia,
+      conselhos!inner(turma_id, bimestre)
+    `)
+    .eq("aluno_id", alunoId)
+    .eq("conselhos.turma_id", conselhoAtual.turma_id)
+    .eq("conselhos.bimestre", bimestreAnterior)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Erro ao validar proficiência anterior.");
+  }
+
+  if (!registroAnterior || !registroAnterior.nivel_proficiencia) {
+    return { permitido: true };
+  }
+
+  const anterior = ordemProficiencia[registroAnterior.nivel_proficiencia] || 0;
+  const atual = ordemProficiencia[novaProficiencia] || 0;
+
+  if (atual < anterior) {
+    return {
+      permitido: false,
+      nivelAnterior: registroAnterior.nivel_proficiencia
+    };
+  }
+
+  return { permitido: true };
+}
+
 async function salvarConselho() {
   if (!conselhoAtual) {
     alert("Carregue um conselho primeiro.");
@@ -736,7 +784,7 @@ async function salvarConselho() {
   const linhas = document.querySelectorAll("#corpoTabela tr");
   const dadosParaSalvar = [];
 
-  linhas.forEach(linha => {
+  for (let linha of linhas) {
     const alunoId = linha.getAttribute("data-aluno-id");
     if (!alunoId) return;
 
@@ -757,6 +805,22 @@ async function salvarConselho() {
     const indisciplina = { tem: indTem, descricao: indTem ? indDesc : "" };
 
     const proficiencia = linha.querySelector(".proficiencia")?.value || null;
+	  if (proficiencia) {
+		  const validacao = await validarProficienciaBimestreAnterior(
+		    alunoId,
+		    conselhoAtual,
+		    proficiencia
+		  );
+		
+		  if (!validacao.permitido) {
+		    alert(
+		      `O aluno não pode regredir na proficiência.\n\n` +
+		      `Bimestre anterior: ${validacao.nivelAnterior}\n` +
+		      `Selecionado agora: ${proficiencia}`
+		    );
+		    throw new Error("Validação de proficiência falhou");
+		  }
+		}
     const concluido = linha.querySelector(".concluidoSwitch")?.checked || false;
 
 	//Validação extra
