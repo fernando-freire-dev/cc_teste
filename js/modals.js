@@ -925,3 +925,4 @@ document.getElementById("btnProximo")?.addEventListener("click", async () => {
   const linhas = document.querySelectorAll("#corpoTabela tr");
   if (alunoAtualIndex < linhas.length - 1) abrirModalConselho(alunoAtualIndex + 1);
 });
+});
