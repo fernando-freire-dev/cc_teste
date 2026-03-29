@@ -858,7 +858,7 @@ async function salvarConselho() {
 
       updated_by: usuarioLogado?.id || null
     });
-  });
+  }
 
   const { error } = await supabaseClient
     .from("conselho_alunos")
