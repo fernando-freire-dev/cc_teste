@@ -399,7 +399,7 @@ async function vincularProfessor() {
 
   const { error } = await supabaseClient
     .from("professor_turma")
-    .insert([{ professor_id, turma_id }]);
+    .insert([{ professor_id, turma_id, representante: true }]);
 
   if (error) {
     if (error.code === "23505") {
