@@ -961,7 +961,51 @@ async function salvarAlunoModalAtual() {
   atualizarStatusLinha(linha);
   atualizarContadoresTabela();
   atualizarResumoVisualLinha(linha);
-  
+
+  // ✅ NOVO: auto-save no banco ao salvar/avançar no modal
+  try {
+    const payload = {
+      conselho_id: conselhoAtual.id,
+      aluno_id: alunoId,
+
+      dificuldade: {
+        tem: dificuldade,
+        materias: dificuldade ? selecoesModal.dificuldade.join(", ") : ""
+      },
+
+      faz_atividade_sala: {
+        faz: fazSala === "true",
+        materias: fazSala === "false" ? selecoesModal.sala.join(", ") : ""
+      },
+
+      faz_plataforma: {
+        faz: fazPlataforma === "true",
+        materias: fazPlataforma === "false" ? selecoesModal.plataforma.join(", ") : ""
+      },
+
+      indisciplina: {
+        tem: indisciplina,
+        descricao: indisciplina ? textoIndisciplina : ""
+      },
+
+      nivel_proficiencia: proficiencia || null,
+      concluido: true,
+      updated_by: usuarioLogado?.id || null
+    };
+
+    const { error } = await supabaseClient
+      .from("conselho_alunos")
+      .upsert(payload, { onConflict: ["conselho_id", "aluno_id"] });
+
+    if (error) {
+      console.error("Auto-save erro:", error);
+      alert("Atenção: não foi possível salvar automaticamente. Clique em 'Salvar Conselho' ao final.");
+    }
+
+  } catch (err) {
+    console.error("Auto-save erro:", err);
+  }
+
   return true;
 }
 
