@@ -113,7 +113,7 @@ async function loadConselhos() {
 
           <button class="btn btn-sm ${statusTxt === "finalizado" ? "btn-outline-secondary" : "btn-secondary"}" 
             onclick="baixarRelatorio('${c.id}')" 
-            ${"" /* disabled temporário removido para teste */}>
+            ${statusTxt !== "finalizado" ? "disabled" : ""}>
             PDF
           </button>
 
